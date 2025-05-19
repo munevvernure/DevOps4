@@ -1,6 +1,6 @@
 
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY target/devops4-0.0.1-SNAPSHOT.jar app.jar
+COPY target/DevOps4-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
