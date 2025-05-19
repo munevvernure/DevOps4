@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: devops4
-          image: kullaniciadi/devops4  # ← Docker Hub’daki image adınla değiştir
+          image: munevvernure/devops4:latest
           ports:
             - containerPort: 8080
