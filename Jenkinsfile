@@ -2,10 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'munevvernure/devops4'
+        IMAGE_NAME = 'munevvernure/devops4:latest'
         DOCKER_CREDS = credentials('dockerhub-creds-id')
-        KUBECONFIG = '/var/lib/jenkins/.kube/config'
-        MINIKUBE_HOME = '/var/lib/jenkins'
     }
 
     stages {
@@ -16,9 +14,9 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build with Maven') {
             steps {
-                sh './mvnw clean package'
+                sh './mvnw clean package -DskipTests'
             }
         }
 
@@ -30,10 +28,16 @@ pipeline {
             }
         }
 
-        stage('K8s Deploy') {
+        stage('Deploy to Minikube') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
+                withCredentials([string(credentialsId: 'kubeconfig-content', variable: 'KUBECONFIG_RAW')]) {
+                    sh '''
+                        echo "$KUBECONFIG_RAW" > kubeconfig.yaml
+                        export KUBECONFIG=$(pwd)/kubeconfig.yaml
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                    '''
+                }
             }
         }
     }
