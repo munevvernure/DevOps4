@@ -6,13 +6,13 @@ pipeline {
         DOCKER_CREDS = credentials('dockerhub-creds-id')
     }
 
-    stage('Clone from GitHub') {
-        steps {
-            git branch: 'main',
-                url: 'https://github.com/munevvernure/DevOps4.git'
+    stages {
+        stage('Clone from GitHub') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/munevvernure/DevOps4.git'
+            }
         }
-    }
-
 
         stage('Build with Maven') {
             steps {
