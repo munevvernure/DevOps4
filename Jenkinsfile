@@ -2,42 +2,55 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'munevvernure/devops4:latest'
-        DOCKER_CREDS = credentials('dockerhub-creds-id')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        DOCKER_IMAGE = "munevvernure/devops4"
+    }
+
+    triggers {
+        githubPush()
     }
 
     stages {
-        stage('Clone') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/munevvernure/DevOps4.git'
+                git 'https://github.com/munevvernure/DevOps4.git'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build Application') {
             steps {
                 sh 'mvn clean package'
             }
         }
 
-        stage('Docker Build & Push') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
-                sh 'echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin'
-                sh 'docker push $IMAGE_NAME'
+                sh 'docker build -t $DOCKER_IMAGE:latest .'
             }
         }
 
-        stage('Deploy to Minikube') {
+        stage('Login to DockerHub') {
             steps {
-                withEnv(["KUBECONFIG=/home/jenkins/.kube/config"]) {
-                    sh '''
-                        kubectl apply --validate=false -f k8s/deployment.yaml
-                        kubectl apply --validate=false -f k8s/service.yaml
-                    '''
-                }
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
 
+        stage('Push Image to DockerHub') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE:latest'
+            }
+        }
+
+        stage('Deploy to Kubernetes (Deployment)') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml'
+            }
+        }
+
+        stage('Deploy to Kubernetes (Service)') {
+            steps {
+                sh 'kubectl apply -f k8s/service.yaml'
+            }
+        }
     }
 }
