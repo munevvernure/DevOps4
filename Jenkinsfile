@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         DOCKER_IMAGE = "munevvernure/devops4"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
 
     triggers {
