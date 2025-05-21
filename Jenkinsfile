@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/munevvernure/DevOps4.git'
+            git branch: 'main', url: 'https://github.com/munevvernure/DevOps4.git'
             }
         }
 
