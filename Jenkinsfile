@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                sh './mvnw clean package -DskipTests'
+                sh 'mvn clean package'
             }
         }
 
@@ -30,15 +30,14 @@ pipeline {
 
         stage('Deploy to Minikube') {
             steps {
-                withCredentials([string(credentialsId: 'kubeconfig-content', variable: 'KUBECONFIG_RAW')]) {
+                withEnv(["KUBECONFIG=/home/jenkins/.kube/config"]) {
                     sh '''
-                        echo "$KUBECONFIG_RAW" > kubeconfig.yaml
-                        export KUBECONFIG=$(pwd)/kubeconfig.yaml
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
                     '''
                 }
             }
         }
+
     }
 }
