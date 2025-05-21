@@ -41,13 +41,6 @@ pipeline {
                 sh 'docker push $DOCKER_IMAGE:latest'
             }
         }
-        stage('Debug: Kubectl Context') {
-            steps {
-                sh 'kubectl config current-context'
-                sh 'kubectl get nodes'
-            }
-        }
-
 
         stage('Deploy to Kubernetes (Deployment)') {
             steps {
