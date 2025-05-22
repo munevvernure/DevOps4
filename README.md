@@ -1,6 +1,1 @@
-test commit
-second test commit
-third test commit
-dorduncuuuu
-testttttt
-bismillahcoksukurrr
+This project demonstrates a basic CI/CD pipeline setup for a Spring Boot application using Jenkins, Docker, and Kubernetes (Minikube). The pipeline is triggered by GitHub updates, automatically builds the application, creates and pushes a Docker image to DockerHub, and deploys it to a Kubernetes cluster. The application is exposed through a NodePort service and can be scaled to run multiple pods.
